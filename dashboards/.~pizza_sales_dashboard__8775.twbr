@@ -3,16 +3,22 @@
 <!-- build 20252.25.0514.2217                               -->
 <workbook original-version='18.1' source-build='2025.2.0 (20252.25.0514.2217)' source-platform='mac' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
   <document-format-change-manifest>
+    <AccessibleZoneTabOrder />
     <AnimationOnByDefault />
+    <AutoCreateAndUpdateDSDPhoneLayouts />
+    <BasicButtonObject />
+    <BasicButtonObjectTextSupport />
     <MarkAnimation />
     <ObjectModelEncapsulateLegacy />
     <ObjectModelExtractV2 />
     <ObjectModelTableType />
     <SchemaViewerObjectModel />
+    <SetMembershipControl />
     <SheetIdentifierTracking />
     <SortTagCleanup />
     <_.fcp.VConnDownstreamExtractsWithWarnings.true...VConnDownstreamExtractsWithWarnings />
     <WindowsPersistSimpleIdentifiers />
+    <ZoneFriendlyName />
   </document-format-change-manifest>
   <preferences>
     <preference name='ui.encoding.shelf.height' value='24' />
@@ -323,10 +329,21 @@
       <column caption='Pizza Name' datatype='string' name='[pizza_name]' role='dimension' type='nominal' />
       <column caption='Pizza Size' datatype='string' name='[pizza_size]' role='dimension' type='nominal' />
       <column caption='Quantity' datatype='integer' name='[quantity]' role='measure' type='quantitative' />
-      <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+      <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
       <column caption='Unit Price' datatype='real' name='[unit_price]' role='measure' type='quantitative' />
       <column caption='Year' datatype='integer' name='[year]' role='dimension' type='quantitative' />
       <column-instance column='[is_weekend]' derivation='None' name='[none:is_weekend:nk]' pivot='key' type='nominal' />
+      <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
+      <group caption='Action (Is Weekend)' hidden='true' name='[Action (Is Weekend)]' name-style='unqualified' user:auto-column='sheet_link'>
+        <groupfilter function='crossjoin'>
+          <groupfilter function='level-members' level='[is_weekend]' />
+        </groupfilter>
+      </group>
+      <group caption='Action (WEEKDAY(Order Date))' hidden='true' name='[Action (WEEKDAY(Order Date))]' name-style='unqualified' user:auto-column='sheet_link'>
+        <groupfilter function='crossjoin'>
+          <groupfilter function='level-members' level='[wd:order_date:ok]' />
+        </groupfilter>
+      </group>
       <extract _.fcp.VConnDownstreamExtractsWithWarnings.true...user-specific='false' count='-1' enabled='true' object-id='' units='records'>
         <connection access_mode='readonly' author-locale='en_US' class='hyper' dbname='/var/folders/l1/kcfsdr451n98nd8gxcg2bzgw0000gn/T/tableau-temp/#TableauTemp_13xqcba0f2bsc11d7dtzv1msvvad.hyper' default-settings='hyper' schema='Extract' sslmode='' tablename='Extract' update-time='07/08/2025 12:33:03 PM' username='tableau_internal_user'>
           <relation name='Extract' table='[Extract].[Extract]' type='table' />
@@ -581,11 +598,11 @@
       <style>
         <style-rule element='mark'>
           <encoding attr='color' field='[none:is_weekend:nk]' type='palette'>
-            <map to='#4e79a7'>
-              <bucket>false</bucket>
-            </map>
-            <map to='#f28e2b'>
+            <map to='#a72d21'>
               <bucket>true</bucket>
+            </map>
+            <map to='#f2d9bc'>
+              <bucket>false</bucket>
             </map>
           </encoding>
         </style-rule>
@@ -647,6 +664,24 @@
       </filter>
     </shared-view>
   </shared-views>
+  <actions>
+    <action caption='Filter 1 (generated)' name='[Action1_62A57A32985B45E790E85F3CA9B04484]'>
+      <activation auto-clear='true' type='on-select' />
+      <source dashboard='Pizza Sales Dashboard' type='sheet' worksheet='Weekend vs Weekday Sales' />
+      <command command='tsc:tsl-filter'>
+        <param name='special-fields' value='all' />
+        <param name='target' value='Pizza Sales Dashboard' />
+      </command>
+    </action>
+    <action caption='Filter 2 (generated)' name='[Action2_3773CE65072146B6921B5C009BB98DC8]'>
+      <activation auto-clear='true' type='on-select' />
+      <source dashboard='Pizza Sales Dashboard' type='sheet' worksheet='Day of Week' />
+      <command command='tsc:tsl-filter'>
+        <param name='special-fields' value='all' />
+        <param name='target' value='Pizza Sales Dashboard' />
+      </command>
+    </action>
+  </actions>
   <worksheets>
     <worksheet name='Category Wise Sales'>
       <table>
@@ -662,7 +697,7 @@
             <column-instance column='[pizza_category]' derivation='None' name='[none:pizza_category:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Category' datatype='string' name='[pizza_category]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
@@ -670,13 +705,39 @@
           </slices>
           <aggregation value='true' />
         </view>
-        <style />
+        <style>
+          <style-rule element='axis'>
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' scope='rows' value='false' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]' value='10' />
+            <format attr='color' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]' value='#000000' />
+            <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]' value='bold' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+          </style-rule>
+          <style-rule element='zeroline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
+          </style-rule>
+        </style>
         <panes>
           <pane selection-relaxation-option='selection-relaxation-allow'>
             <view>
               <breakdown value='auto' />
             </view>
-            <mark class='Automatic' />
+            <mark class='Bar' />
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-color' value='#a72d21' />
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+            </style>
           </pane>
         </panes>
         <rows>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]</rows>
@@ -691,24 +752,46 @@
             <datasource caption='cleaned_data' name='federated.1nr21uc12jwb9e1a5j31r1ot0le2' />
           </datasources>
           <datasource-dependencies datasource='federated.1nr21uc12jwb9e1a5j31r1ot0le2'>
+            <column caption='Is Weekend' datatype='boolean' name='[is_weekend]' role='dimension' type='nominal' />
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column-instance column='[total_price]' derivation='Sum' name='[sum:total_price:qk]' pivot='key' type='quantitative' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
             <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]'>
+            <groupfilter function='level-members' level='[is_weekend]' user:ui-action-filter='[Action1_62A57A32985B45E790E85F3CA9B04484]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]</column>
           </slices>
           <aggregation value='true' />
         </view>
         <style>
           <style-rule element='axis'>
             <format attr='title' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[sum:total_price:qk]' scope='rows' value='Total Revenue ($)' />
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[sum:total_price:qk]' scope='rows' value='false' />
           </style-rule>
           <style-rule element='cell'>
             <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:qk]' value='ieeee' />
+          </style-rule>
+          <style-rule element='header'>
+            <format attr='height-header' value='17' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:ok]' value='10' />
+            <format attr='color' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:ok]' value='#000000' />
+            <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:ok]' value='bold' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+          </style-rule>
+          <style-rule element='zeroline'>
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
           </style-rule>
         </style>
         <panes>
@@ -719,7 +802,9 @@
             <mark class='Bar' />
             <style>
               <style-rule element='mark'>
-                <format attr='mark-labels-show' value='false' />
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-color' value='#a72d21' />
               </style-rule>
             </style>
           </pane>
@@ -733,7 +818,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontname='Tableau Book' fontsize='16'>Average Order Value</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Average Order Value</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -746,13 +831,23 @@
             <column caption='Average Order Value' datatype='real' name='[Calculation_16395946986651649]' role='measure' type='quantitative'>
               <calculation class='tableau' formula='AVG([total_price])' />
             </column>
+            <column caption='Is Weekend' datatype='boolean' name='[is_weekend]' role='dimension' type='nominal' />
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986651649]' derivation='User' name='[usr:Calculation_16395946986651649:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]'>
+            <groupfilter function='level-members' level='[is_weekend]' user:ui-action-filter='[Action1_62A57A32985B45E790E85F3CA9B04484]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]'>
+            <groupfilter function='level-members' level='[wd:order_date:ok]' user:ui-action-filter='[Action2_3773CE65072146B6921B5C009BB98DC8]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -762,6 +857,7 @@
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='26' />
             <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='bold' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='Tableau Bold' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -789,7 +885,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontname='Tableau Book' fontsize='16'>Total Orders</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Total Orders</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -803,12 +899,22 @@
               <calculation class='tableau' formula='COUNT([__tableau_internal_object_id__].[cleaned_data.csv_68D83F59D4504315B332AA80A9DEA221])' />
             </column>
             <column caption='cleaned_data.csv' datatype='table' name='[__tableau_internal_object_id__].[cleaned_data.csv_68D83F59D4504315B332AA80A9DEA221]' role='measure' type='quantitative' />
+            <column caption='Is Weekend' datatype='boolean' name='[is_weekend]' role='dimension' type='nominal' />
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column-instance column='[Calculation_16395946986795010]' derivation='User' name='[usr:Calculation_16395946986795010:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]'>
+            <groupfilter function='level-members' level='[is_weekend]' user:ui-action-filter='[Action1_62A57A32985B45E790E85F3CA9B04484]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]'>
+            <groupfilter function='level-members' level='[wd:order_date:ok]' user:ui-action-filter='[Action2_3773CE65072146B6921B5C009BB98DC8]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -817,6 +923,7 @@
             <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='n#,##0,K;-#,##0,K' />
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='26' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='Tableau Bold' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -844,7 +951,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontname='Tableau Book' fontsize='16'>Total Pizzas Sold</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Total Pizzas Sold</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -857,13 +964,23 @@
             <column caption='Total Pizzas Sold' datatype='integer' name='[Calculation_16395946987180035]' role='measure' type='quantitative'>
               <calculation class='tableau' formula='SUM([quantity])' />
             </column>
+            <column caption='Is Weekend' datatype='boolean' name='[is_weekend]' role='dimension' type='nominal' />
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Quantity' datatype='integer' name='[quantity]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946987180035]' derivation='User' name='[usr:Calculation_16395946987180035:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]'>
+            <groupfilter function='level-members' level='[is_weekend]' user:ui-action-filter='[Action1_62A57A32985B45E790E85F3CA9B04484]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]'>
+            <groupfilter function='level-members' level='[wd:order_date:ok]' user:ui-action-filter='[Action2_3773CE65072146B6921B5C009BB98DC8]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -872,6 +989,7 @@
             <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='n#,##0,K;-#,##0,K' />
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='26' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='Tableau Bold' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -899,7 +1017,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontalignment='1' fontsize='16'>Total Sales</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Total Sales</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -912,13 +1030,23 @@
             <column caption='Total Sales' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[Calculation_16395946986422272]' role='measure' type='quantitative'>
               <calculation class='tableau' formula='SUM([total_price])' />
             </column>
+            <column caption='Is Weekend' datatype='boolean' name='[is_weekend]' role='dimension' type='nominal' />
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]'>
+            <groupfilter function='level-members' level='[is_weekend]' user:ui-action-filter='[Action1_62A57A32985B45E790E85F3CA9B04484]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]'>
+            <groupfilter function='level-members' level='[wd:order_date:ok]' user:ui-action-filter='[Action2_3773CE65072146B6921B5C009BB98DC8]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -928,7 +1056,7 @@
             <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='bold' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='Tableau Bold' />
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='26' />
-            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='left' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -967,7 +1095,7 @@
             <column-instance column='[pizza_name]' derivation='None' name='[none:pizza_name:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Name' datatype='string' name='[pizza_name]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]'>
@@ -987,6 +1115,9 @@
         <style>
           <style-rule element='header'>
             <format attr='width' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]' value='204' />
+          </style-rule>
+          <style-rule element='table'>
+            <format attr='band-size' scope='rows' value='0' />
           </style-rule>
           <style-rule element='worksheet'>
             <format attr='display-field-labels' scope='rows' value='false' />
@@ -1014,6 +1145,13 @@
       <simple-id uuid='{A88D1E20-8BE0-4AA3-A27A-912C91A0B0B6}' />
     </worksheet>
     <worksheet name='M-O-M Sales'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run>Monthly Sales Trend</run>
+          </formatted-text>
+        </title>
+      </layout-options>
       <table>
         <view>
           <datasources>
@@ -1023,24 +1161,54 @@
             <column caption='Total Sales' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[Calculation_16395946986422272]' role='measure' type='quantitative'>
               <calculation class='tableau' formula='SUM([total_price])' />
             </column>
+            <column caption='Is Weekend' datatype='boolean' name='[is_weekend]' role='dimension' type='nominal' />
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]'>
+            <groupfilter function='level-members' level='[is_weekend]' user:ui-action-filter='[Action1_62A57A32985B45E790E85F3CA9B04484]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]'>
+            <groupfilter function='level-members' level='[wd:order_date:ok]' user:ui-action-filter='[Action2_3773CE65072146B6921B5C009BB98DC8]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (Is Weekend)]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]</column>
           </slices>
           <aggregation value='true' />
         </view>
         <style>
           <style-rule element='axis'>
-            <encoding attr='space' class='0' domain-expand='false' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' field-type='quantitative' major-origin='30000.0' major-spacing='10000.0' max='73012.734909456543' min='60000.0' range-type='fixed' scope='rows' type='space' />
-            <format attr='title' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' scope='cols' value='Month' />
+            <encoding attr='space' class='0' domain-expand='false' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' field-type='quantitative' major-origin='30000.0' major-spacing='10000.0' scope='rows' type='space' />
+            <format attr='title' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' scope='cols' value='' />
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' scope='rows' value='false' />
           </style-rule>
           <style-rule element='cell'>
-            <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' value='S' />
+            <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' value='*mmm' />
+          </style-rule>
+          <style-rule element='header'>
+            <format attr='border-width' data-class='total' value='0' />
+            <format attr='border-style' data-class='total' value='none' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' value='*mmm' />
+          </style-rule>
+          <style-rule element='pane'>
+            <format attr='border-width' data-class='total' value='0' />
+            <format attr='border-style' data-class='total' value='none' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+          </style-rule>
+          <style-rule element='zeroline'>
+            <format attr='stroke-size' value='0' />
+            <format attr='line-visibility' value='off' />
           </style-rule>
         </style>
         <panes>
@@ -1049,6 +1217,11 @@
               <breakdown value='auto' />
             </view>
             <mark class='Line' />
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-color' value='#a72d21' />
+              </style-rule>
+            </style>
           </pane>
         </panes>
         <rows>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]</rows>
@@ -1070,7 +1243,7 @@
             <column-instance column='[pizza_size]' derivation='None' name='[none:pizza_size:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Size' datatype='string' name='[pizza_size]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
@@ -1078,13 +1251,33 @@
           </slices>
           <aggregation value='true' />
         </view>
-        <style />
+        <style>
+          <style-rule element='axis'>
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' scope='cols' value='false' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]' value='10' />
+            <format attr='color' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]' value='#000000' />
+            <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]' value='bold' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
+          </style-rule>
+        </style>
         <panes>
           <pane selection-relaxation-option='selection-relaxation-allow'>
             <view>
               <breakdown value='auto' />
             </view>
-            <mark class='Automatic' />
+            <mark class='Bar' />
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-color' value='#a72d21' />
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+            </style>
           </pane>
         </panes>
         <rows>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]</rows>
@@ -1106,7 +1299,7 @@
             <column-instance column='[pizza_name]' derivation='None' name='[none:pizza_name:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Name' datatype='string' name='[pizza_name]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]'>
@@ -1126,6 +1319,13 @@
         <style>
           <style-rule element='header'>
             <format attr='width' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]' value='204' />
+          </style-rule>
+          <style-rule element='pane'>
+            <format attr='band-color' scope='cols' value='#00000000' />
+          </style-rule>
+          <style-rule element='table'>
+            <format attr='band-size' scope='rows' value='0' />
+            <format attr='band-size' scope='cols' value='1' />
           </style-rule>
           <style-rule element='worksheet'>
             <format attr='display-field-labels' scope='rows' value='false' />
@@ -1177,7 +1377,7 @@
             <column caption='Quantity' datatype='integer' name='[quantity]' role='measure' type='quantitative' />
             <column-instance column='[total_price]' derivation='Sum' name='[sum:total_price:qk]' pivot='key' type='quantitative' />
             <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:ok]' pivot='key' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
             <column-instance column='[Calculation_16395946986651649]' derivation='User' name='[usr:Calculation_16395946986651649:qk]' pivot='key' type='quantitative' />
             <column-instance column='[Calculation_16395946986795010]' derivation='User' name='[usr:Calculation_16395946986795010:qk]' pivot='key' type='quantitative' />
@@ -1242,11 +1442,16 @@
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column-instance column='[is_weekend]' derivation='None' name='[none:is_weekend:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]'>
+            <groupfilter function='level-members' level='[wd:order_date:ok]' user:ui-action-filter='[Action2_3773CE65072146B6921B5C009BB98DC8]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[Action (WEEKDAY(Order Date))]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -1264,7 +1469,7 @@
             </encodings>
             <style>
               <style-rule element='mark'>
-                <format attr='size' value='0.84558010101318359' />
+                <format attr='size' value='1.4172928333282471' />
                 <format attr='mark-labels-show' value='true' />
                 <format attr='mark-labels-cull' value='true' />
               </style-rule>
@@ -1277,6 +1482,197 @@
       <simple-id uuid='{B409209A-AF4C-409A-B3AB-414E3A6DD318}' />
     </worksheet>
   </worksheets>
+  <dashboards>
+    <dashboard enable-sort-zone-taborder='true' name='Pizza Sales Dashboard'>
+      <style />
+      <size maxheight='860' maxwidth='1200' minheight='800' minwidth='1200' sizing-mode='range' />
+      <zones>
+        <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>
+          <zone h='98000' id='40' layout-strategy-id='distribute-evenly' param='horz' type-v2='layout-flow' w='98666' x='667' y='1000'>
+            <zone friendly-name='Vertical Cont. (Main)' h='98000' id='3' param='vert' type-v2='layout-flow' w='98666' x='667' y='1000'>
+              <zone friendly-name='Horizontal Cont. (Title)' h='6625' id='6' param='horz' type-v2='layout-flow' w='98666' x='667' y='1000'>
+                <zone fixed-size='972' forceUpdate='true' h='6625' id='7' is-fixed='true' type-v2='text' w='81667' x='667' y='1000'>
+                  <formatted-text>
+                    <run fontcolor='#000000' fontsize='24'>Pizza Sales Dashboard | 2015</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='188' h='6625' id='8' is-fixed='true' type-v2='dashboard-object' w='16334' x='82334' y='1000'>
+                  <button action='' button-type='text'>
+                    <button-visual-state>
+                      <caption>Product Dashboard</caption>
+                      <button-caption-font-style fontcolor='#ffffff' fontname='Tableau Bold' fontsize='12' />
+                      <format attr='background-color' value='#333333' />
+                    </button-visual-state>
+                  </button>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone fixed-size='355' friendly-name='Horizontal Cont. (L1)' h='44375' id='9' is-fixed='true' param='horz' type-v2='layout-flow' w='98666' x='667' y='7625'>
+                <zone fixed-size='442' friendly-name='Vertical Cont. (KPI)' h='44375' id='11' is-fixed='true' layout-strategy-id='distribute-evenly' param='vert' type-v2='layout-flow' w='36833' x='667' y='7625'>
+                  <zone h='22250' id='13' param='horz' type-v2='layout-flow' w='36833' x='667' y='7625'>
+                    <zone h='22250' id='30' name='KPI total sales' w='18416' x='667' y='7625'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone h='22250' id='36' name='KPI AOV' w='18416' x='19083' y='7625'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                  </zone>
+                  <zone h='22125' id='17' param='horz' type-v2='layout-flow' w='36833' x='667' y='29875'>
+                    <zone h='22125' id='35' name='KPI Orders' w='18416' x='667' y='29875'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone h='22125' id='34' name='KPI Pizza Sold' w='18416' x='19083' y='29875'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                  </zone>
+                </zone>
+                <zone h='44375' id='37' name='M-O-M Sales' w='61833' x='37500' y='7625'>
+                  <layout-cache minheight='173' minwidth='100' type-h='scalable' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='10' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone h='47000' id='23' layout-strategy-id='distribute-evenly' param='horz' type-v2='layout-flow' w='98666' x='667' y='52000'>
+                <zone fixed-size='501' h='47000' id='38' is-fixed='true' name='Day of Week' w='49333' x='667' y='52000'>
+                  <layout-cache minheight='182' type-h='scalable' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='10' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone h='47000' id='42' name='Weekend vs Weekday Sales' w='49333' x='50000' y='52000'>
+                  <layout-cache cell-count-w='1' type-h='cell' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='10' />
+                  </zone-style>
+                </zone>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='background-color' value='#e1d3c860' />
+                </zone-style>
+              </zone>
+              <zone-style>
+                <format attr='border-color' value='#000000' />
+                <format attr='border-style' value='none' />
+                <format attr='border-width' value='0' />
+                <format attr='background-color' value='#e1d3c860' />
+              </zone-style>
+            </zone>
+            <zone-style>
+              <format attr='border-color' value='#000000' />
+              <format attr='border-style' value='none' />
+              <format attr='border-width' value='0' />
+              <format attr='background-color' value='#e1d3c860' />
+            </zone-style>
+          </zone>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='none' />
+            <format attr='border-width' value='0' />
+            <format attr='margin' value='8' />
+          </zone-style>
+        </zone>
+      </zones>
+      <devicelayouts>
+        <devicelayout auto-generated='true' name='Phone'>
+          <size maxheight='700' minheight='700' sizing-mode='vscroll' />
+          <zones>
+            <zone h='100000' id='29' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98000' id='28' param='vert' type-v2='layout-flow' w='98666' x='667' y='1000'>
+                <zone fixed-size='972' forceUpdate='true' h='6500' id='7' type-v2='text' w='81667' x='750' y='5125'>
+                  <formatted-text>
+                    <run fontcolor='#000000' fontsize='24'>Pizza Sales Dashboard | 2015</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='188' h='6500' id='8' type-v2='dashboard-object' w='16334' x='82417' y='5125'>
+                  <button action='' button-type='text'>
+                    <button-visual-state>
+                      <caption>Product Dashboard</caption>
+                      <button-caption-font-style fontcolor='#ffffff' fontname='Tableau Bold' fontsize='12' />
+                      <format attr='background-color' value='#333333' />
+                    </button-visual-state>
+                  </button>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone-style>
+                <format attr='border-color' value='#000000' />
+                <format attr='border-style' value='none' />
+                <format attr='border-width' value='0' />
+                <format attr='margin' value='8' />
+              </zone-style>
+            </zone>
+          </zones>
+        </devicelayout>
+      </devicelayouts>
+      <simple-id uuid='{5F3767B1-C3F9-4747-86F2-5954A491904B}' />
+    </dashboard>
+  </dashboards>
   <windows source-height='30'>
     <window class='worksheet' name='Test'>
       <cards>
@@ -1302,7 +1698,7 @@
       </cards>
       <simple-id uuid='{92C9A054-8089-4DBD-A21C-AEC30C7AE32D}' />
     </window>
-    <window class='worksheet' maximized='true' name='KPI total sales'>
+    <window class='worksheet' name='KPI total sales'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -1323,6 +1719,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{F8DDC914-FCD3-4A88-8E21-F0911FF0F2E8}' />
     </window>
     <window class='worksheet' name='KPI Orders'>
@@ -1351,6 +1750,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{2C33DA21-A182-4A4F-8230-FD3D74974AF2}' />
     </window>
     <window class='worksheet' name='KPI AOV'>
@@ -1379,6 +1781,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{0937AE32-035D-4741-9677-F99A06ADCA05}' />
     </window>
     <window class='worksheet' name='KPI Pizza Sold'>
@@ -1402,6 +1807,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{66CD229E-1694-4827-BE85-44A8840B6E66}' />
     </window>
     <window class='worksheet' name='M-O-M Sales'>
@@ -1422,6 +1830,11 @@
           </strip>
           <strip size='31'>
             <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card param='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]' type='filter' />
           </strip>
         </edge>
       </cards>
@@ -1600,6 +2013,33 @@
         </edge>
       </cards>
       <simple-id uuid='{FEA1C69B-8FF2-4E59-8F8D-7BBE271B515C}' />
+    </window>
+    <window class='dashboard' maximized='true' name='Pizza Sales Dashboard'>
+      <viewpoints>
+        <viewpoint name='Day of Week'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI AOV'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI Orders'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI Pizza Sold'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI total sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='M-O-M Sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='Weekend vs Weekday Sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+      </viewpoints>
+      <active id='42' />
+      <simple-id uuid='{30EDACFE-1699-49F4-9C6E-469D658D6AD2}' />
     </window>
   </windows>
 </workbook>

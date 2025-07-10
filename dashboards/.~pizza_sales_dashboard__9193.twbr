@@ -3,16 +3,24 @@
 <!-- build 20252.25.0514.2217                               -->
 <workbook original-version='18.1' source-build='2025.2.0 (20252.25.0514.2217)' source-platform='mac' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
   <document-format-change-manifest>
+    <AccessibleZoneTabOrder />
     <AnimationOnByDefault />
+    <AutoCreateAndUpdateDSDPhoneLayouts />
+    <BasicButtonObject />
+    <BasicButtonObjectTextSupport />
     <MarkAnimation />
     <ObjectModelEncapsulateLegacy />
     <ObjectModelExtractV2 />
     <ObjectModelTableType />
     <SchemaViewerObjectModel />
+    <SetMembershipControl />
     <SheetIdentifierTracking />
     <SortTagCleanup />
     <_.fcp.VConnDownstreamExtractsWithWarnings.true...VConnDownstreamExtractsWithWarnings />
     <WindowsPersistSimpleIdentifiers />
+    <WorksheetBackgroundTransparency />
+    <ZoneBackgroundTransparency />
+    <ZoneFriendlyName />
   </document-format-change-manifest>
   <preferences>
     <preference name='ui.encoding.shelf.height' value='24' />
@@ -323,7 +331,7 @@
       <column caption='Pizza Name' datatype='string' name='[pizza_name]' role='dimension' type='nominal' />
       <column caption='Pizza Size' datatype='string' name='[pizza_size]' role='dimension' type='nominal' />
       <column caption='Quantity' datatype='integer' name='[quantity]' role='measure' type='quantitative' />
-      <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+      <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
       <column caption='Unit Price' datatype='real' name='[unit_price]' role='measure' type='quantitative' />
       <column caption='Year' datatype='integer' name='[year]' role='dimension' type='quantitative' />
       <column-instance column='[is_weekend]' derivation='None' name='[none:is_weekend:nk]' pivot='key' type='nominal' />
@@ -581,11 +589,11 @@
       <style>
         <style-rule element='mark'>
           <encoding attr='color' field='[none:is_weekend:nk]' type='palette'>
-            <map to='#4e79a7'>
-              <bucket>false</bucket>
-            </map>
-            <map to='#f28e2b'>
+            <map to='#a72d21'>
               <bucket>true</bucket>
+            </map>
+            <map to='#f2d9bc'>
+              <bucket>false</bucket>
             </map>
           </encoding>
         </style-rule>
@@ -641,14 +649,26 @@
       <datasource-dependencies datasource='federated.1nr21uc12jwb9e1a5j31r1ot0le2'>
         <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
         <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
+        <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
       </datasource-dependencies>
       <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]'>
         <groupfilter function='level-members' level='[mn:order_date:ok]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+      </filter>
+      <filter class='quantitative' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' included-values='in-range-or-null'>
+        <min>#2015-01-01 00:00:00#</min>
+        <max>#2015-12-01 00:00:00#</max>
       </filter>
     </shared-view>
   </shared-views>
   <worksheets>
     <worksheet name='Category Wise Sales'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run bold='true' fontsize='12'>&lt;Sheet Name&gt;</run>
+          </formatted-text>
+        </title>
+      </layout-options>
       <table>
         <view>
           <datasources>
@@ -662,53 +682,34 @@
             <column-instance column='[pizza_category]' derivation='None' name='[none:pizza_category:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Category' datatype='string' name='[pizza_category]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
-          </slices>
-          <aggregation value='true' />
-        </view>
-        <style />
-        <panes>
-          <pane selection-relaxation-option='selection-relaxation-allow'>
-            <view>
-              <breakdown value='auto' />
-            </view>
-            <mark class='Automatic' />
-          </pane>
-        </panes>
-        <rows>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]</rows>
-        <cols>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]</cols>
-      </table>
-      <simple-id uuid='{30701490-220E-4DF3-8E70-D8302FDBE2DF}' />
-    </worksheet>
-    <worksheet name='Day of Week'>
-      <table>
-        <view>
-          <datasources>
-            <datasource caption='cleaned_data' name='federated.1nr21uc12jwb9e1a5j31r1ot0le2' />
-          </datasources>
-          <datasource-dependencies datasource='federated.1nr21uc12jwb9e1a5j31r1ot0le2'>
-            <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
-            <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
-            <column-instance column='[total_price]' derivation='Sum' name='[sum:total_price:qk]' pivot='key' type='quantitative' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
-            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:qk]' pivot='key' type='quantitative' />
-          </datasource-dependencies>
-          <slices>
-            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
         <style>
           <style-rule element='axis'>
-            <format attr='title' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[sum:total_price:qk]' scope='rows' value='Total Revenue ($)' />
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' scope='rows' value='false' />
           </style-rule>
-          <style-rule element='cell'>
-            <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:qk]' value='ieeee' />
+          <style-rule element='label'>
+            <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]' value='10' />
+            <format attr='color' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]' value='#000000' />
+            <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]' value='bold' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+          </style-rule>
+          <style-rule element='zeroline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
           </style-rule>
         </style>
         <panes>
@@ -719,7 +720,82 @@
             <mark class='Bar' />
             <style>
               <style-rule element='mark'>
-                <format attr='mark-labels-show' value='false' />
+                <format attr='mark-color' value='#a72d21' />
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]</rows>
+        <cols>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]</cols>
+      </table>
+      <simple-id uuid='{30701490-220E-4DF3-8E70-D8302FDBE2DF}' />
+    </worksheet>
+    <worksheet name='Day of Week'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run bold='true' fontsize='12'>&lt;Sheet Name&gt;</run>
+          </formatted-text>
+        </title>
+      </layout-options>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='cleaned_data' name='federated.1nr21uc12jwb9e1a5j31r1ot0le2' />
+          </datasources>
+          <datasource-dependencies datasource='federated.1nr21uc12jwb9e1a5j31r1ot0le2'>
+            <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
+            <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
+            <column-instance column='[total_price]' derivation='Sum' name='[sum:total_price:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[order_date]' derivation='Weekday' name='[wd:order_date:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <slices>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <format attr='title' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[sum:total_price:qk]' scope='rows' value='Total Revenue ($)' />
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[sum:total_price:qk]' scope='rows' value='false' />
+          </style-rule>
+          <style-rule element='cell'>
+            <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:qk]' value='ieeee' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:ok]' value='10' />
+            <format attr='color' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:ok]' value='#000000' />
+            <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[wd:order_date:ok]' value='bold' />
+          </style-rule>
+          <style-rule element='worksheet'>
+            <format attr='display-field-labels' scope='cols' value='false' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+          </style-rule>
+          <style-rule element='zeroline'>
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-color' value='#a72d21' />
               </style-rule>
             </style>
           </pane>
@@ -733,7 +809,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontname='Tableau Book' fontsize='16'>Average Order Value</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Average Order Value</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -748,11 +824,13 @@
             </column>
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986651649]' derivation='User' name='[usr:Calculation_16395946986651649:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -762,6 +840,7 @@
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='26' />
             <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='bold' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='Tableau Bold' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986651649:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -789,7 +868,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontname='Tableau Book' fontsize='16'>Total Orders</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Total Orders</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -805,10 +884,12 @@
             <column caption='cleaned_data.csv' datatype='table' name='[__tableau_internal_object_id__].[cleaned_data.csv_68D83F59D4504315B332AA80A9DEA221]' role='measure' type='quantitative' />
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
             <column-instance column='[Calculation_16395946986795010]' derivation='User' name='[usr:Calculation_16395946986795010:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -817,6 +898,7 @@
             <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='n#,##0,K;-#,##0,K' />
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='26' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='Tableau Bold' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986795010:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -844,7 +926,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontname='Tableau Book' fontsize='16'>Total Pizzas Sold</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Total Pizzas Sold</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -860,10 +942,12 @@
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Quantity' datatype='integer' name='[quantity]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
             <column-instance column='[Calculation_16395946987180035]' derivation='User' name='[usr:Calculation_16395946987180035:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -872,6 +956,7 @@
             <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='n#,##0,K;-#,##0,K' />
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='26' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='Tableau Bold' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946987180035:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -899,7 +984,7 @@
       <layout-options>
         <title>
           <formatted-text>
-            <run fontalignment='1' fontsize='16'>Total Sales</run>
+            <run bold='true' fontalignment='1' fontsize='14'>Total Sales</run>
           </formatted-text>
         </title>
       </layout-options>
@@ -914,11 +999,13 @@
             </column>
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -928,7 +1015,7 @@
             <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='bold' />
             <format attr='font-family' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='Tableau Bold' />
             <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='26' />
-            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='left' />
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' value='center' />
           </style-rule>
         </style>
         <panes>
@@ -954,6 +1041,13 @@
       <simple-id uuid='{928729C9-2269-450C-BF82-B9C167C1BA79}' />
     </worksheet>
     <worksheet name='LOW 5'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run bold='true' fontalignment='1'>&lt;Sheet Name&gt;</run>
+          </formatted-text>
+        </title>
+      </layout-options>
       <table>
         <view>
           <datasources>
@@ -967,7 +1061,8 @@
             <column-instance column='[pizza_name]' derivation='None' name='[none:pizza_name:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Name' datatype='string' name='[pizza_name]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]'>
@@ -981,12 +1076,16 @@
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
         <style>
           <style-rule element='header'>
             <format attr='width' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]' value='204' />
+          </style-rule>
+          <style-rule element='table'>
+            <format attr='band-size' scope='rows' value='0' />
           </style-rule>
           <style-rule element='worksheet'>
             <format attr='display-field-labels' scope='rows' value='false' />
@@ -1014,6 +1113,13 @@
       <simple-id uuid='{A88D1E20-8BE0-4AA3-A27A-912C91A0B0B6}' />
     </worksheet>
     <worksheet name='M-O-M Sales'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run bold='true' fontsize='12'>Monthly Sales Trend</run>
+          </formatted-text>
+        </title>
+      </layout-options>
       <table>
         <view>
           <datasources>
@@ -1024,23 +1130,66 @@
               <calculation class='tableau' formula='SUM([total_price])' />
             </column>
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[pizza_category]' derivation='None' name='[none:pizza_category:nk]' pivot='key' type='nominal' />
+            <column-instance column='[pizza_size]' derivation='None' name='[none:pizza_size:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
+            <column caption='Pizza Category' datatype='string' name='[pizza_category]' role='dimension' type='nominal' />
+            <column caption='Pizza Size' datatype='string' name='[pizza_size]' role='dimension' type='nominal' />
             <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]'>
+            <groupfilter function='level-members' level='[none:pizza_category:nk]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]'>
+            <groupfilter function='union' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+              <groupfilter function='member' level='[none:pizza_size:nk]' member='&quot;L&quot;' />
+              <groupfilter function='member' level='[none:pizza_size:nk]' member='&quot;M&quot;' />
+              <groupfilter function='member' level='[none:pizza_size:nk]' member='&quot;S&quot;' />
+              <groupfilter function='member' level='[none:pizza_size:nk]' member='&quot;XL&quot;' />
+              <groupfilter function='member' level='[none:pizza_size:nk]' member='&quot;XXL&quot;' />
+            </groupfilter>
+          </filter>
+          <filter class='quantitative' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' included-values='in-range' />
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_category:nk]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
         <style>
           <style-rule element='axis'>
             <encoding attr='space' class='0' domain-expand='false' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' field-type='quantitative' major-origin='30000.0' major-spacing='10000.0' max='73012.734909456543' min='60000.0' range-type='fixed' scope='rows' type='space' />
-            <format attr='title' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' scope='cols' value='Month' />
+            <format attr='title' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' scope='cols' value='' />
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' scope='rows' value='false' />
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
           </style-rule>
           <style-rule element='cell'>
             <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' value='S' />
+          </style-rule>
+          <style-rule element='header'>
+            <format attr='border-width' data-class='total' value='0' />
+            <format attr='border-style' data-class='total' value='none' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='text-format' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' value='*mmm' />
+          </style-rule>
+          <style-rule element='pane'>
+            <format attr='border-width' data-class='total' value='0' />
+            <format attr='border-style' data-class='total' value='none' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+          </style-rule>
+          <style-rule element='zeroline'>
+            <format attr='stroke-size' value='0' />
+            <format attr='line-visibility' value='off' />
           </style-rule>
         </style>
         <panes>
@@ -1049,6 +1198,11 @@
               <breakdown value='auto' />
             </view>
             <mark class='Line' />
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-color' value='#a72d21' />
+              </style-rule>
+            </style>
           </pane>
         </panes>
         <rows>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]</rows>
@@ -1057,6 +1211,13 @@
       <simple-id uuid='{30A406D7-4B89-4210-8FA9-CEED4DC0104E}' />
     </worksheet>
     <worksheet name='Size wise sales'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run bold='true' fontsize='12'>&lt;Sheet Name&gt;</run>
+          </formatted-text>
+        </title>
+      </layout-options>
       <table>
         <view>
           <datasources>
@@ -1070,21 +1231,43 @@
             <column-instance column='[pizza_size]' derivation='None' name='[none:pizza_size:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Size' datatype='string' name='[pizza_size]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
-        <style />
+        <style>
+          <style-rule element='axis'>
+            <format attr='display' class='0' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[usr:Calculation_16395946986422272:qk]' scope='cols' value='false' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='font-size' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]' value='10' />
+            <format attr='color' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]' value='#000000' />
+            <format attr='font-weight' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]' value='bold' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
+          </style-rule>
+        </style>
         <panes>
           <pane selection-relaxation-option='selection-relaxation-allow'>
             <view>
               <breakdown value='auto' />
             </view>
-            <mark class='Automatic' />
+            <mark class='Bar' />
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-color' value='#a72d21' />
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+            </style>
           </pane>
         </panes>
         <rows>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_size:nk]</rows>
@@ -1093,6 +1276,13 @@
       <simple-id uuid='{CD803F7A-533F-4883-8D0D-E4A49F7B330C}' />
     </worksheet>
     <worksheet name='TOP 5'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run bold='true' fontalignment='1'>&lt;Sheet Name&gt;</run>
+          </formatted-text>
+        </title>
+      </layout-options>
       <table>
         <view>
           <datasources>
@@ -1106,7 +1296,8 @@
             <column-instance column='[pizza_name]' derivation='None' name='[none:pizza_name:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
             <column caption='Pizza Name' datatype='string' name='[pizza_name]' role='dimension' type='nominal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <filter class='categorical' column='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]'>
@@ -1120,12 +1311,23 @@
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
         <style>
           <style-rule element='header'>
             <format attr='width' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]' value='204' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='text-align' field='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[none:pizza_name:nk]' value='left' />
+          </style-rule>
+          <style-rule element='pane'>
+            <format attr='band-color' scope='cols' value='#00000000' />
+          </style-rule>
+          <style-rule element='table'>
+            <format attr='band-size' scope='rows' value='0' />
+            <format attr='band-size' scope='cols' value='1' />
           </style-rule>
           <style-rule element='worksheet'>
             <format attr='display-field-labels' scope='rows' value='false' />
@@ -1177,7 +1379,8 @@
             <column caption='Quantity' datatype='integer' name='[quantity]' role='measure' type='quantitative' />
             <column-instance column='[total_price]' derivation='Sum' name='[sum:total_price:qk]' pivot='key' type='quantitative' />
             <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:ok]' pivot='key' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
             <column-instance column='[Calculation_16395946986651649]' derivation='User' name='[usr:Calculation_16395946986651649:qk]' pivot='key' type='quantitative' />
             <column-instance column='[Calculation_16395946986795010]' derivation='User' name='[usr:Calculation_16395946986795010:qk]' pivot='key' type='quantitative' />
@@ -1195,6 +1398,7 @@
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[:Measure Names]</column>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -1242,11 +1446,13 @@
             <column-instance column='[order_date]' derivation='Month' name='[mn:order_date:ok]' pivot='key' type='ordinal' />
             <column-instance column='[is_weekend]' derivation='None' name='[none:is_weekend:nk]' pivot='key' type='nominal' />
             <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
-            <column caption='Total Price' datatype='real' name='[total_price]' role='measure' type='quantitative' />
+            <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Price' datatype='real' default-format='n&quot;$&quot;#,##0,K;-&quot;$&quot;#,##0,K' name='[total_price]' role='measure' type='quantitative' />
             <column-instance column='[Calculation_16395946986422272]' derivation='User' name='[usr:Calculation_16395946986422272:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <slices>
             <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]</column>
+            <column>[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -1264,7 +1470,7 @@
             </encodings>
             <style>
               <style-rule element='mark'>
-                <format attr='size' value='0.84558010101318359' />
+                <format attr='size' value='1.3733149766921997' />
                 <format attr='mark-labels-show' value='true' />
                 <format attr='mark-labels-cull' value='true' />
               </style-rule>
@@ -1277,6 +1483,781 @@
       <simple-id uuid='{B409209A-AF4C-409A-B3AB-414E3A6DD318}' />
     </worksheet>
   </worksheets>
+  <dashboards>
+    <dashboard enable-sort-zone-taborder='true' name='Pizza Sales Dashboard'>
+      <style />
+      <size maxheight='860' maxwidth='1200' minheight='800' minwidth='1200' sizing-mode='range' />
+      <datasources>
+        <datasource caption='cleaned_data' name='federated.1nr21uc12jwb9e1a5j31r1ot0le2' />
+      </datasources>
+      <datasource-dependencies datasource='federated.1nr21uc12jwb9e1a5j31r1ot0le2'>
+        <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
+        <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+      </datasource-dependencies>
+      <zones>
+        <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>
+          <zone h='98000' id='74' param='horz' type-v2='layout-flow' w='98666' x='667' y='1000'>
+            <zone friendly-name='Vertical Cont. (Main)' h='98000' id='3' param='vert' type-v2='layout-flow' w='98666' x='667' y='1000'>
+              <zone fixed-size='54' friendly-name='Horizontal Cont. (Title)' h='7250' id='6' is-fixed='true' param='horz' type-v2='layout-flow' w='98666' x='667' y='1000'>
+                <zone fixed-size='972' forceUpdate='true' h='6750' id='7' is-fixed='true' type-v2='text' w='81667' x='667' y='1500'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000' fontsize='22'>Pizza Sales Dashboard | 2015</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='4' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='188' h='6750' id='8' is-fixed='true' type-v2='dashboard-object' w='16334' x='82334' y='1500'>
+                  <button action='tabdoc:goto-sheet window-id=&quot;{20CB9282-1087-4807-88CA-096111FC6160}&quot;' button-type='text'>
+                    <button-visual-state>
+                      <caption>Product Dashboard</caption>
+                      <button-caption-font-style fontcolor='#ffffff' fontname='Tableau Bold' fontsize='12' />
+                      <format attr='background-color' value='#c53528' />
+                      <format attr='border-style' value='solid' />
+                      <format attr='border-width' value='1' />
+                      <format attr='border-color' value='#000000' />
+                    </button-visual-state>
+                  </button>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                  </zone-style>
+                </zone>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='0' />
+                  <format attr='margin-top' value='4' />
+                </zone-style>
+              </zone>
+              <zone fixed-size='340' friendly-name='Horizontal Cont. (L1)' h='42500' id='9' is-fixed='true' param='horz' type-v2='layout-flow' w='98666' x='667' y='8250'>
+                <zone fixed-size='466' friendly-name='Vertical Cont. (KPI)' h='42500' id='11' is-fixed='true' layout-strategy-id='distribute-evenly' param='vert' type-v2='layout-flow' w='38833' x='667' y='8250'>
+                  <zone h='21250' id='13' param='horz' type-v2='layout-flow' w='38833' x='667' y='8250'>
+                    <zone h='21250' id='30' name='KPI total sales' w='19416' x='667' y='8250'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='padding' value='4' />
+                        <format attr='padding-top' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone h='21250' id='31' name='KPI AOV' w='19416' x='20083' y='8250'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='padding' value='4' />
+                        <format attr='padding-top' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                  </zone>
+                  <zone h='21250' id='17' param='horz' type-v2='layout-flow' w='38833' x='667' y='29500'>
+                    <zone h='21250' id='32' name='KPI Orders' w='19416' x='667' y='29500'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='padding' value='4' />
+                        <format attr='padding-top' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone h='21250' id='34' name='KPI Pizza Sold' w='19416' x='20083' y='29500'>
+                      <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='10' />
+                        <format attr='padding' value='4' />
+                        <format attr='padding-top' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                  </zone>
+                </zone>
+                <zone h='42500' id='35' name='M-O-M Sales' w='59833' x='39500' y='8250'>
+                  <layout-cache minheight='167' minwidth='100' type-h='scalable' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='10' />
+                    <format attr='padding' value='7' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone h='48250' id='23' param='horz' type-v2='layout-flow' w='98666' x='667' y='50750'>
+                <zone fixed-size='620' h='48250' id='36' is-fixed='true' name='Day of Week' w='53334' x='667' y='50750'>
+                  <layout-cache minheight='159' type-h='scalable' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='10' />
+                    <format attr='padding' value='7' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone h='48250' id='43' param='vert' type-v2='layout-flow' w='45332' x='54001' y='50750'>
+                  <zone fixed-size='28' forceUpdate='true' h='3500' id='47' is-fixed='true' type-v2='text' w='44166' x='54584' y='51625'>
+                    <formatted-text>
+                      <run bold='true' fontcolor='#000000' fontsize='12'>Weekend vs Weekday Sales</run>
+                    </formatted-text>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='0' />
+                      <format attr='margin-bottom' value='0' />
+                      <format attr='padding' value='7' />
+                      <format attr='background-color' value='#ffffff' />
+                    </zone-style>
+                  </zone>
+                  <zone h='43000' id='40' name='Weekend vs Weekday Sales' show-title='false' w='44166' x='54584' y='55125'>
+                    <layout-cache cell-count-h='1' type-h='cell' type-w='cell' />
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='0' />
+                      <format attr='background-color' value='#ffffff' />
+                    </zone-style>
+                  </zone>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='padding' value='7' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone-style>
+                <format attr='border-color' value='#000000' />
+                <format attr='border-style' value='none' />
+                <format attr='border-width' value='0' />
+                <format attr='background-color' value='#f9e9e056' />
+              </zone-style>
+            </zone>
+          </zone>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='none' />
+            <format attr='border-width' value='0' />
+            <format attr='margin' value='8' />
+          </zone-style>
+        </zone>
+        <zone forceUpdate='true' h='3750' id='45' type-v2='text' w='17667' x='55250' y='55375'>
+          <formatted-text>
+            <run bold='true' fontcolor='#c53528'>Æ </run>
+            <run fontcolor='#c53528'>⬤</run>
+            <run bold='true' fontcolor='#c53528'> Weekend</run>
+            <run bold='true' fontcolor='#000000'>Æ  </run>
+            <run fontcolor='#f2d9bc'>⬤</run>
+            <run bold='true' fontcolor='#f2d9bc'> Weekday</run>
+          </formatted-text>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='none' />
+            <format attr='border-width' value='0' />
+            <format attr='padding' value='7' />
+            <format attr='background-color' value='#ffffff' />
+          </zone-style>
+        </zone>
+        <zone fixed-size='160' h='6375' id='73' is-fixed='true' param='vert' type-v2='layout-flow' w='17583' x='63333' y='1750'>
+          <zone h='6125' id='75' name='M-O-M Sales' param='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' show-title='false' type-v2='filter' values='database' w='17417' x='63416' y='1875'>
+            <zone-style>
+              <format attr='border-color' value='#000000' />
+              <format attr='border-style' value='none' />
+              <format attr='border-width' value='0' />
+              <format attr='margin' value='4' />
+            </zone-style>
+          </zone>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='solid' />
+            <format attr='border-width' value='1' />
+            <format attr='background-color' value='#f0eae8' />
+          </zone-style>
+        </zone>
+      </zones>
+      <devicelayouts>
+        <devicelayout auto-generated='true' name='Phone'>
+          <size maxheight='1850' minheight='1850' sizing-mode='vscroll' />
+          <zones>
+            <zone h='100000' id='72' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98000' id='71' param='vert' type-v2='layout-flow' w='98666' x='667' y='1000'>
+                <zone fixed-size='972' forceUpdate='true' h='6000' id='7' type-v2='text' w='81667' x='667' y='1500'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000' fontsize='22'>Pizza Sales Dashboard | 2015</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='188' h='6000' id='8' type-v2='dashboard-object' w='16334' x='82334' y='1500'>
+                  <button action='tabdoc:goto-sheet window-id=&quot;{20CB9282-1087-4807-88CA-096111FC6160}&quot;' button-type='text'>
+                    <button-visual-state>
+                      <caption>Product Dashboard</caption>
+                      <button-caption-font-style fontcolor='#ffffff' fontname='Tableau Bold' fontsize='12' />
+                      <format attr='background-color' value='#c53528' />
+                      <format attr='border-style' value='solid' />
+                      <format attr='border-width' value='1' />
+                      <format attr='border-color' value='#000000' />
+                    </button-visual-state>
+                  </button>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='158' h='21250' id='30' is-fixed='true' name='KPI total sales' w='19416' x='667' y='7500'>
+                  <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='158' h='21250' id='31' is-fixed='true' name='KPI AOV' w='19416' x='20083' y='7500'>
+                  <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='42500' id='35' is-fixed='true' name='M-O-M Sales' w='59833' x='39500' y='7500'>
+                  <layout-cache minheight='173' minwidth='100' type-h='scalable' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='159' h='21250' id='32' is-fixed='true' name='KPI Orders' w='19416' x='667' y='28750'>
+                  <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='159' h='21250' id='34' is-fixed='true' name='KPI Pizza Sold' w='19416' x='20083' y='28750'>
+                  <layout-cache cell-count-h='1' cell-count-w='1' non-cell-size-h='41' type-h='cell' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='49000' id='36' is-fixed='true' name='Day of Week' w='53334' x='667' y='50000'>
+                  <layout-cache minheight='165' type-h='scalable' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='3500' id='47' type-v2='text' w='44166' x='54584' y='50875'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000' fontsize='12'>Weekend vs Weekday Sales</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='2125' id='45' type-v2='text' w='44166' x='54584' y='54375'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#c53528'>Æ </run>
+                    <run fontcolor='#c53528'>⬤</run>
+                    <run bold='true' fontcolor='#c53528'> Weekend</run>
+                    <run bold='true' fontcolor='#000000'>Æ  </run>
+                    <run fontcolor='#f2d9bc'>⬤</run>
+                    <run bold='true' fontcolor='#f2d9bc'> Weekday</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='41625' id='40' is-fixed='true' name='Weekend vs Weekday Sales' show-title='false' w='44166' x='54584' y='56500'>
+                  <layout-cache type-h='cell' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone-style>
+                <format attr='border-color' value='#000000' />
+                <format attr='border-style' value='none' />
+                <format attr='border-width' value='0' />
+                <format attr='margin' value='8' />
+              </zone-style>
+            </zone>
+          </zones>
+        </devicelayout>
+      </devicelayouts>
+      <simple-id uuid='{5F3767B1-C3F9-4747-86F2-5954A491904B}' />
+    </dashboard>
+    <dashboard enable-sort-zone-taborder='true' name='Product Dashboard'>
+      <style />
+      <size maxheight='860' maxwidth='1200' minheight='800' minwidth='1200' sizing-mode='range' />
+      <datasources>
+        <datasource caption='cleaned_data' name='federated.1nr21uc12jwb9e1a5j31r1ot0le2' />
+      </datasources>
+      <datasource-dependencies datasource='federated.1nr21uc12jwb9e1a5j31r1ot0le2'>
+        <column caption='Order Date' datatype='date' name='[order_date]' role='dimension' type='ordinal' />
+        <column-instance column='[order_date]' derivation='Month-Trunc' name='[tmn:order_date:qk]' pivot='key' type='quantitative' />
+      </datasource-dependencies>
+      <zones>
+        <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>
+          <zone h='98000' id='82' param='horz' type-v2='layout-flow' w='98666' x='667' y='1000'>
+            <zone h='98000' id='80' param='horz' type-v2='layout-flow' w='98666' x='667' y='1000'>
+              <zone friendly-name='Vertical Cont. (Main)' h='98000' id='3' param='vert' type-v2='layout-flow' w='98666' x='667' y='1000'>
+                <zone friendly-name='Horizontal Cont. (Title)' h='6500' id='6' param='horz' type-v2='layout-flow' w='98666' x='667' y='1000'>
+                  <zone fixed-size='972' forceUpdate='true' h='6000' id='7' is-fixed='true' type-v2='text' w='81667' x='667' y='1500'>
+                    <formatted-text>
+                      <run bold='true' fontcolor='#000000' fontsize='22'>Product Dashboard | 2015</run>
+                    </formatted-text>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                      <format attr='padding' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone fixed-size='188' h='6000' id='8' is-fixed='true' type-v2='dashboard-object' w='16334' x='82334' y='1500'>
+                    <button action='tabdoc:goto-sheet window-id=&quot;{30EDACFE-1699-49F4-9C6E-469D658D6AD2}&quot;' button-type='text'>
+                      <button-visual-state>
+                        <caption>Sales Dashboard</caption>
+                        <button-caption-font-style fontcolor='#ffffff' fontname='Tableau Bold' fontsize='12' />
+                        <format attr='background-color' value='#c53528' />
+                      </button-visual-state>
+                    </button>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='0' />
+                    <format attr='margin-top' value='4' />
+                  </zone-style>
+                </zone>
+                <zone friendly-name='Horizontal Cont. (L1)' h='59625' id='9' layout-strategy-id='distribute-evenly' param='horz' type-v2='layout-flow' w='98666' x='667' y='7500'>
+                  <zone fixed-size='584' h='59625' id='52' is-fixed='true' name='Category Wise Sales' w='49333' x='667' y='7500'>
+                    <layout-cache minheight='179' type-h='scalable' type-w='cell' />
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                      <format attr='background-color' value='#ffffff' />
+                    </zone-style>
+                  </zone>
+                  <zone h='59625' id='53' name='Size wise sales' w='49333' x='50000' y='7500'>
+                    <layout-cache minwidth='180' type-h='cell' type-w='scalable' />
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                      <format attr='background-color' value='#ffffff' />
+                    </zone-style>
+                  </zone>
+                </zone>
+                <zone fixed-size='255' h='31875' id='23' is-fixed='true' layout-strategy-id='distribute-evenly' param='horz' type-v2='layout-flow' w='98666' x='667' y='67125'>
+                  <zone friendly-name='Vertical Container' h='31875' id='61' param='vert' type-v2='layout-flow' w='49333' x='667' y='67125'>
+                    <zone forceUpdate='true' h='3250' id='66' type-v2='text' w='48667' x='1000' y='67625'>
+                      <formatted-text>
+                        <run bold='true' fontalignment='1' fontcolor='#000000' fontsize='12'>TOP 5 Best Sellers</run>
+                      </formatted-text>
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='4' />
+                        <format attr='margin-top' value='4' />
+                        <format attr='margin-right' value='0' />
+                        <format attr='margin-bottom' value='0' />
+                        <format attr='margin-left' value='0' />
+                        <format attr='padding' value='0' />
+                        <format attr='padding-top' value='5' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone h='3750' id='62' param='horz' type-v2='layout-flow' w='48667' x='1000' y='70875'>
+                      <zone fixed-size='502' forceUpdate='true' h='3750' id='63' is-fixed='true' type-v2='text' w='42000' x='1000' y='70875'>
+                        <formatted-text>
+                          <run bold='true' fontcolor='#000000'>Pizza Name</run>
+                        </formatted-text>
+                        <zone-style>
+                          <format attr='border-color' value='#000000' />
+                          <format attr='border-style' value='none' />
+                          <format attr='border-width' value='0' />
+                          <format attr='margin' value='4' />
+                        </zone-style>
+                      </zone>
+                      <zone fixed-size='72' forceUpdate='true' h='3750' id='64' is-fixed='true' type-v2='text' w='6667' x='43000' y='70875'>
+                        <formatted-text>
+                          <run bold='true' fontcolor='#000000'>Total Sales</run>
+                        </formatted-text>
+                        <zone-style>
+                          <format attr='border-color' value='#000000' />
+                          <format attr='border-style' value='none' />
+                          <format attr='border-width' value='0' />
+                          <format attr='margin' value='4' />
+                        </zone-style>
+                      </zone>
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone fixed-size='628' h='23875' id='54' is-fixed='true' name='TOP 5' show-title='false' w='48667' x='1000' y='74625'>
+                      <layout-cache cell-count-w='1' non-cell-size-w='204' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='4' />
+                        <format attr='margin-top' value='0' />
+                        <format attr='margin-right' value='0' />
+                        <format attr='margin-left' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='31875' id='71' param='vert' type-v2='layout-flow' w='49333' x='50000' y='67125'>
+                    <zone forceUpdate='true' h='3250' id='76' type-v2='text' w='48667' x='50333' y='67625'>
+                      <formatted-text>
+                        <run bold='true' fontalignment='1' fontcolor='#000000' fontsize='12'>5 Lowest Selling Pizzas</run>
+                      </formatted-text>
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='4' />
+                        <format attr='margin-right' value='0' />
+                        <format attr='margin-bottom' value='0' />
+                        <format attr='margin-left' value='0' />
+                        <format attr='padding-top' value='5' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone h='3750' id='72' param='horz' type-v2='layout-flow' w='48667' x='50333' y='70875'>
+                      <zone fixed-size='511' h='3750' id='73' is-fixed='true' type-v2='text' w='42000' x='50333' y='70875'>
+                        <formatted-text>
+                          <run bold='true' fontcolor='#000000'>Pizza Name</run>
+                        </formatted-text>
+                        <zone-style>
+                          <format attr='border-color' value='#000000' />
+                          <format attr='border-style' value='none' />
+                          <format attr='border-width' value='0' />
+                          <format attr='margin' value='0' />
+                          <format attr='margin-top' value='4' />
+                        </zone-style>
+                      </zone>
+                      <zone fixed-size='72' forceUpdate='true' h='3750' id='74' is-fixed='true' type-v2='text' w='6667' x='92333' y='70875'>
+                        <formatted-text>
+                          <run bold='true' fontcolor='#000000'>Total Sales</run>
+                        </formatted-text>
+                        <zone-style>
+                          <format attr='border-color' value='#000000' />
+                          <format attr='border-style' value='none' />
+                          <format attr='border-width' value='0' />
+                          <format attr='margin' value='4' />
+                        </zone-style>
+                      </zone>
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone fixed-size='638' h='23875' id='58' is-fixed='true' name='LOW 5' show-title='false' w='48667' x='50333' y='74625'>
+                      <layout-cache cell-count-w='1' non-cell-size-w='204' type-h='cell' type-w='cell' />
+                      <zone-style>
+                        <format attr='border-color' value='#000000' />
+                        <format attr='border-style' value='none' />
+                        <format attr='border-width' value='0' />
+                        <format attr='margin' value='0' />
+                        <format attr='background-color' value='#ffffff' />
+                      </zone-style>
+                    </zone>
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                </zone>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='background-color' value='#f9e9e056' />
+                </zone-style>
+              </zone>
+            </zone>
+          </zone>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='none' />
+            <format attr='border-width' value='0' />
+            <format attr='margin' value='8' />
+          </zone-style>
+        </zone>
+        <zone fixed-size='160' h='8000' id='81' is-fixed='true' param='vert' type-v2='layout-flow' w='20167' x='61250' y='1875'>
+          <zone h='6375' id='84' name='Size wise sales' param='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' show-title='false' type-v2='filter' values='database' w='20167' x='61250' y='1875'>
+            <zone-style>
+              <format attr='border-color' value='#000000' />
+              <format attr='border-style' value='none' />
+              <format attr='border-width' value='0' />
+              <format attr='margin' value='4' />
+            </zone-style>
+          </zone>
+        </zone>
+      </zones>
+      <devicelayouts>
+        <devicelayout auto-generated='true' name='Phone'>
+          <size maxheight='1550' minheight='1550' sizing-mode='vscroll' />
+          <zones>
+            <zone h='100000' id='78' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98000' id='77' param='vert' type-v2='layout-flow' w='98666' x='667' y='1000'>
+                <zone fixed-size='972' forceUpdate='true' h='6000' id='7' type-v2='text' w='81667' x='667' y='1500'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000' fontsize='22'>Product Dashboard | 2015</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='188' h='6000' id='8' type-v2='dashboard-object' w='16334' x='82334' y='1500'>
+                  <button action='tabdoc:goto-sheet window-id=&quot;{30EDACFE-1699-49F4-9C6E-469D658D6AD2}&quot;' button-type='text'>
+                    <button-visual-state>
+                      <caption>Sales Dashboard</caption>
+                      <button-caption-font-style fontcolor='#ffffff' fontname='Tableau Bold' fontsize='12' />
+                      <format attr='background-color' value='#c53528' />
+                    </button-visual-state>
+                  </button>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='59625' id='52' is-fixed='true' name='Category Wise Sales' w='49333' x='667' y='7500'>
+                  <layout-cache minheight='185' type-h='scalable' type-w='cell' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='59625' id='53' is-fixed='true' name='Size wise sales' w='49333' x='50000' y='7500'>
+                  <layout-cache cell-count-h='5' minwidth='180' non-cell-size-h='63' type-h='cell' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='3250' id='66' type-v2='text' w='48667' x='1000' y='67625'>
+                  <formatted-text>
+                    <run bold='true' fontalignment='1' fontcolor='#000000' fontsize='12'>TOP 5 Best Sellers</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='3250' id='76' type-v2='text' w='48667' x='50333' y='67625'>
+                  <formatted-text>
+                    <run bold='true' fontalignment='1' fontcolor='#000000' fontsize='12'>5 Lowest Selling Pizzas</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='502' forceUpdate='true' h='3750' id='63' type-v2='text' w='42000' x='1000' y='70875'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000'>Pizza Name</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='72' forceUpdate='true' h='3750' id='64' type-v2='text' w='6667' x='43000' y='70875'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000'>Total Sales</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='511' h='3750' id='73' type-v2='text' w='42000' x='50333' y='70875'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000'>Pizza Name</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='72' forceUpdate='true' h='3750' id='74' type-v2='text' w='6667' x='92333' y='70875'>
+                  <formatted-text>
+                    <run bold='true' fontcolor='#000000'>Total Sales</run>
+                  </formatted-text>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='201' h='23875' id='54' is-fixed='true' name='TOP 5' show-title='false' w='48667' x='1000' y='74625'>
+                  <layout-cache type-h='cell' type-w='fixed' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='205' h='23875' id='58' is-fixed='true' name='LOW 5' show-title='false' w='48667' x='50333' y='74625'>
+                  <layout-cache type-h='cell' type-w='fixed' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                    <format attr='background-color' value='#ffffff' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone-style>
+                <format attr='border-color' value='#000000' />
+                <format attr='border-style' value='none' />
+                <format attr='border-width' value='0' />
+                <format attr='margin' value='8' />
+              </zone-style>
+            </zone>
+          </zones>
+        </devicelayout>
+      </devicelayouts>
+      <simple-id uuid='{97623897-2BC2-4C62-8D3A-3ECC082B01E5}' />
+    </dashboard>
+  </dashboards>
   <windows source-height='30'>
     <window class='worksheet' name='Test'>
       <cards>
@@ -1302,7 +2283,7 @@
       </cards>
       <simple-id uuid='{92C9A054-8089-4DBD-A21C-AEC30C7AE32D}' />
     </window>
-    <window class='worksheet' maximized='true' name='KPI total sales'>
+    <window class='worksheet' name='KPI total sales'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -1323,6 +2304,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{F8DDC914-FCD3-4A88-8E21-F0911FF0F2E8}' />
     </window>
     <window class='worksheet' name='KPI Orders'>
@@ -1351,6 +2335,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{2C33DA21-A182-4A4F-8230-FD3D74974AF2}' />
     </window>
     <window class='worksheet' name='KPI AOV'>
@@ -1379,6 +2366,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{0937AE32-035D-4741-9677-F99A06ADCA05}' />
     </window>
     <window class='worksheet' name='KPI Pizza Sold'>
@@ -1402,6 +2392,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{66CD229E-1694-4827-BE85-44A8840B6E66}' />
     </window>
     <window class='worksheet' name='M-O-M Sales'>
@@ -1422,6 +2415,12 @@
           </strip>
           <strip size='31'>
             <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card param='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[tmn:order_date:qk]' show-domain='false' show-null-ctrls='false' type='filter' />
+            <card param='[federated.1nr21uc12jwb9e1a5j31r1ot0le2].[mn:order_date:ok]' type='filter' />
           </strip>
         </edge>
       </cards>
@@ -1571,6 +2570,9 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <zoom type='entire-view' />
+      </viewpoint>
       <simple-id uuid='{0E2B11B4-41A9-4F4F-B8D3-13D700579565}' />
     </window>
     <window class='worksheet' name='LOW 5'>
@@ -1600,6 +2602,51 @@
         </edge>
       </cards>
       <simple-id uuid='{FEA1C69B-8FF2-4E59-8F8D-7BBE271B515C}' />
+    </window>
+    <window class='dashboard' name='Pizza Sales Dashboard'>
+      <viewpoints>
+        <viewpoint name='Day of Week'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI AOV'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI Orders'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI Pizza Sold'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='KPI total sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='M-O-M Sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='Weekend vs Weekday Sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+      </viewpoints>
+      <active id='73' />
+      <simple-id uuid='{30EDACFE-1699-49F4-9C6E-469D658D6AD2}' />
+    </window>
+    <window class='dashboard' maximized='true' name='Product Dashboard'>
+      <viewpoints>
+        <viewpoint name='Category Wise Sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='LOW 5'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='Size wise sales'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='TOP 5'>
+          <zoom type='entire-view' />
+        </viewpoint>
+      </viewpoints>
+      <active id='84' />
+      <simple-id uuid='{20CB9282-1087-4807-88CA-096111FC6160}' />
     </window>
   </windows>
 </workbook>
